@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.bgWrap {
+    background-image : url(../public/assets/background.gif);
+    width: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+
+}
+.logo {
+    background-image : url(../public/assets/f08dee9dfaeaa84030b6b6f7259fb471.gif);
+    width: 100%;
+    background-size: 150px 150px;
+    background-repeat: no-repeat;
+    background-position: center;
+
+}
