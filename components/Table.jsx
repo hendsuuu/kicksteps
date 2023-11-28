@@ -2,10 +2,32 @@
 
 import React from "react";
 import { useState, useEffect } from "react";
+import { DeleteModal } from "./modal/DeleteModal";
+import { useDisclosure } from "@chakra-ui/react";
+import { DELETE } from "@/app/api/user/delete/[id]/route";
 
 const Table = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  const {
+    isOpen: isOpenDelete,
+    onOpen: onOpenDelete,
+    onClose: onCloseDelete,
+  } = useDisclosure();
+  
+
+  const handleDeleteModal = (row,id) => {
+    setSelectedRow(id);
+    handlerDeleteUser(id);
+    onOpenDelete();
+  };
+
+  const handleDelete = (row) => {
+    console.log("deleted!", row);
+    onCloseDelete();
+  };
 
   const getAllUsers = async () => {
     setLoading(true);
@@ -19,9 +41,12 @@ const Table = () => {
     // update state
   };
 
-  const handlerDeleteUser = async () => {
-    const res = await fetch(`http://localhost:3000/api/user/delete/${userId}`);
+  const handlerDeleteUser = async (userId) => {
+    const res = await fetch(`http://localhost:3000/api/user/delete/${userId}`,{
+      method:DELETE
+    });
 
+    Router.push('/')
     getAllUsers();
   };
 
@@ -30,6 +55,15 @@ const Table = () => {
   }, []);
 
   return (
+    <>
+
+    <DeleteModal
+    isOpen={isOpenDelete}
+    onClose={onCloseDelete}
+    target={selectedRow}
+    onDelete={handleDelete}
+    />
+    
     <div className="w-full flex place-content-center p-15">
       <div className="relative rounded-xl overflow-auto bg-slate-800 w-11/12">
         <div className="shadow-sm overflow-hidden my-8">
@@ -69,15 +103,15 @@ const Table = () => {
                           Edit
                         </button>
                       </a>
-                  
-                      <a href="/api/user/delete/${}">
+
+                      {/* <a href="/api/user/delete/${}"> */}
                         <button
-                          onClick={handleDeleteUser}
+                          onClick={()=>{handleDeleteModal(user.id)}}
                           className="bg-red-500 px-5 py-1 rounded-sm mt-4"
                         >
                           Hapus
                         </button>
-                      </a>
+                      {/* </a> */}
                     </td>
                   </tr>
                 ))
@@ -87,6 +121,8 @@ const Table = () => {
         </div>
       </div>
     </div>
+    </>
+
   );
 };
 
