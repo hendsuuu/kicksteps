@@ -1,22 +1,18 @@
 import { PrismaClient } from "@prisma/client";
-// import { useRouter } from "next/router";
 import { json } from "react-router-dom";
-// import { useRouter } from "next/router";
-
 const prisma = new PrismaClient();
 
-const deleteUser = async (req,res) => {
-  // const route = useRouter();
-  const id = parseInt(req.params.id);
+const deleteUser = async (request) => {
   try {
+    const id = await request.url.slice(request.url.lastIndexOf("/") + 1);
+    console.log(id);
     const response = await prisma.user.delete({
       where: {
-        id: id,
+        id: parseInt(id),
       },
     });
 
-    // console.log(JSON.stringify(response));
-    return new Response("berhasil hapus user", {
+    return new Response("berhasil Delete User", {
       data: json(response),
       status: 200,
     });

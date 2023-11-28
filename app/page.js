@@ -1,6 +1,36 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+  const [post, setPost] = useState({
+    username: "",
+    password: "",
+  });
+
+  const handleLogin = async () => {
+    e.prevenDefault();
+    setSubmitting(true);
+    try {
+      console.log(JSON.stringify(post));
+      const res = await fetch("http://localhost:3000/api/login", {
+        method: "POST",
+        body: JSON.stringify(post),
+      });
+
+      if (res.ok) {
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="flex bgWrap h-screen items-center min-h-full flex-col justify-center place-content-center px-6 py-12 lg:px-8">
       <div className="w-1/4 p-5  bg-white rounded-xl ">
@@ -10,22 +40,25 @@ export default function Home() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="/dashboard" method="POST">
+          <form className="space-y-6" onSubmit={handleLogin} method="POST">
             <div>
               <label
-                for="username"
+                htmlFor="username"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
                 Username
               </label>
               <div className="mt-2">
                 <input
+                  onChange={(e) => {
+                    setPost({ ...post, username: e.target.value });
+                  }}
                   id="username"
                   name="username"
                   type="username"
-                  autocomplete="username"
+                  autoComplete="username"
                   required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block px-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -33,7 +66,7 @@ export default function Home() {
             <div>
               <div className="flex items-center justify-between">
                 <label
-                  for="password"
+                  htmlFor="password"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Password
@@ -41,12 +74,15 @@ export default function Home() {
               </div>
               <div className="mt-2">
                 <input
+                  onChange={(e) => {
+                    setPost({ ...post, password: e.target.value });
+                  }}
                   id="password"
                   name="password"
                   type="password"
-                  autocomplete="current-password"
+                  autoComplete="current-password"
                   required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block px-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
