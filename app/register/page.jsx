@@ -6,31 +6,37 @@ import { useState } from "react";
 
 const page = () => {
   const router = useRouter();
-  const [submitting, setSubmitting] = useState(false);
+  //   const [submitting, setSubmitting] = useState(false);
   const [post, setPost] = useState({
     username: "",
     password: "",
     confPass: "",
   });
 
-  const handleRegister = async () => {
-    e.prevenDefault();
-    setSubmitting(true);
+  const handleRegister = async (e) => {
     try {
-      console.log(JSON.stringify(post));
+      e.preventDefault();
       const res = await fetch("http://localhost:3000/api/user", {
         method: "POST",
+        headers: {
+          "Content-Type": "Application/json",
+        },
         body: JSON.stringify(post),
       });
 
       if (res.ok) {
         router.push("/");
+      } else {
+        setPost({
+          username: "",
+          password: "",
+          confPass: "",
+        });
+        router.push("/register");
       }
     } catch (error) {
       console.log(error);
-    } finally {
-      setSubmitting(false);
-    }
+    } 
   };
   return (
     <div className="flex bgWrap h-screen items-center min-h-full flex-col justify-center px-6 py-12 lg:px-8">
@@ -41,7 +47,7 @@ const page = () => {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" onSubmit={handleRegister} method="POST">
+          <form className="space-y-6" onSubmit={handleRegister}>
             <div>
               <label
                 htmlFor="username"

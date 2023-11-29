@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { json } from "react-router-dom";
+
 const prisma = new PrismaClient();
 
 const deleteUser = async (request) => {

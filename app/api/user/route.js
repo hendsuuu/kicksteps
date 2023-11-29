@@ -16,7 +16,12 @@ export async function GET() {
 
 export async function POST(request) {
   const data = await request.json();
+  console.log(data);
 
+  if (data.username == "" &&  data.confPass == "" && data.password == "" )
+    return new Response("Lengkapi data terlebih dahulu", {
+      status: 500,
+    });
   if (data.password != data.confPass)
     return new Response("maaf konfirmasi password salah", {
       status: 500,

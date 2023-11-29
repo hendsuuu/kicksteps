@@ -4,12 +4,12 @@ const prisma = new PrismaClient();
 
 const Login = async (request) => {
   try {
-    const { username, password } = await request.json();
-    // console.log(username);
+    const data = await request.json();
+    console.log(data);
     const user = await prisma.user.findFirst({
       where: {
-        name: username,
-        password: password,
+        name: data.username,
+        password: data.password,
       },
     });
 
