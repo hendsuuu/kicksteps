@@ -4,7 +4,6 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { DeleteModal } from "./modal/DeleteModal";
 import { useDisclosure } from "@chakra-ui/react";
-// import { DELETE } from "@/app/api/user/delete/[id]/route";
 import { BadgeModal } from "./modal/BadgeModal";
 
 const Table = () => {
@@ -26,13 +25,32 @@ const Table = () => {
   } = useDisclosure();
 
   const handleEditModal = (target) => {
-    setEditForm(target);
-    // submitDataEdit(data,target);
     onOpenEdit();
+    console.log(editForm);
+  };
+  const handlerEditUser = async (data) => {
+    try {
+      // e.preventDefault;
+      console.log(data);
+      const res = await fetch(`http://localhost:3000/api/user/`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "Application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (res.ok) {
+        onCloseEdit();
+        getAllUsers();
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const submitDataEdit = (data,target) => {
-    // console.log(data, target);
+  const submitDataEdit = (data) => {
+    console.log(data);
     handlerEditUser(data);
   };
 
@@ -47,11 +65,6 @@ const Table = () => {
     console.log("deleted!", id);
     onCloseDelete();
   };
-  // const handleModal = (input) => {
-  //   handleInputModal(input);
-  //   // console.log("deleted!", id);
-  //   onCloseModal();
-  // };
 
   const getAllUsers = async () => {
     setLoading(true);
@@ -64,18 +77,21 @@ const Table = () => {
       setUsers(data);
       setLoading(false);
     }, 1500);
-    // update state
   };
 
   const handlerDeleteUser = async (userId) => {
-    const res = await fetch(`http://localhost:3000/api/user/delete/${userId}`, {
+    const res = await fetch(`http://localhost:3000/api/user`, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "Application/json",
+      },
+      body: JSON.stringify({
+        id: userId,
+      }),
     });
 
-    // Router.push("/");
     getAllUsers();
   };
-  
 
   useEffect(() => {
     getAllUsers();
@@ -110,7 +126,7 @@ const Table = () => {
                     Username
                   </th>
                   <th className="border-b  font-medium p-4 pl-8 py-0 pb-3">
-                    Password
+                    Email
                   </th>
                   <th className="border-b  font-medium p-4 pl-8 py-0 pb-3">
                     Action
@@ -128,7 +144,7 @@ const Table = () => {
                   </tr>
                 ) : (
                   users?.map((user, index) => (
-                    <tr>
+                    <tr key={index}>
                       <td className="border-b p-4 pl-8 py-0 pb-3">
                         {index + 1}
                       </td>
@@ -136,12 +152,15 @@ const Table = () => {
                         {user.name}
                       </td>
                       <td className="border-b  p-4 pl-8 py-0 pb-3">
-                        {user.password}
+                        {user.email}
                       </td>
                       <td className="border-b p-4 pl-8 py-0 pb-3">
                         {/* <a href=""> */}
                         <button
-                          onClick={() => handleEditModal(user)}
+                          onClick={() => {
+                            setEditForm(user);
+                            handleEditModal(user);
+                          }}
                           className="bg-yellow-500 px-5 py-1 rounded-sm mt-4 mr-5"
                         >
                           Edit

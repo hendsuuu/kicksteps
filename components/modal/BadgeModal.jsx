@@ -16,7 +16,7 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/inputs/Input";
 
-export function BadgeModal({ isOpen, onClose, target }) {
+export function BadgeModal({ isOpen, onClose, onSubmit, target }) {
   const {
     handleSubmit,
     control,
@@ -24,44 +24,25 @@ export function BadgeModal({ isOpen, onClose, target }) {
     formState: { errors },
   } = useForm();
 
-  const [editedBadge, setEditedBadge] = useState(target?.name);
-  const [editedPoin, setEditedPoin] = useState(target?.password);
+  const [editedName, setEditedName] = useState(target?.name);
+  const [editedEmail, setEditedEmail] = useState(target?.email);
 
-  const handlerEditUser = async (data) => {
-    try {
-      e.preventDefault();
-      const res = await fetch(`http://localhost:3000/api/user/`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "Application/json",
-        },
-        body: JSON.stringify({
-          id:target?.id,
-          name:data.username,
-          password:data.password
-        }),
-      });
-
-      getAllUsers();
-      if (res.ok) {
-        onCloseEdit();
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [user, setUser] = useState({
+    id: target?.id,
+    name: target?.name,
+    email: target?.email,
+  });
 
   const handleOnSubmit = (data) => {
-    handlerEditUser(data)
     onSubmit(data);
     onClose();
   };
 
   useEffect(() => {
-    console.log(target);
-    setEditedBadge(target?.name);
-    setEditedPoin(target?.password);
-  }, [target?.name, target?.password]);
+    setUser(target);
+    setEditedName(target?.name);
+    setEditedEmail(target?.email);
+  }, [target?.name, target?.email]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -104,22 +85,26 @@ export function BadgeModal({ isOpen, onClose, target }) {
           />
         </ModalHeader>
         <ModalBody>
-          <form onSubmit={handleSubmit(handleOnSubmit)}>
+          <form>
             <ModalBody>
               <Flex direction={"column"} gap={3}>
                 <Input
-                  value={editedBadge}
+                  onChange={(e) => {
+                    setUser({ ...user, name: e.target.value });
+                  }}
+                  defaultValue={editedName}
                   label={"Username"}
                   placeholder={"Username"}
                   control={control}
-                  error={errors.badge}
                 />
                 <Input
-                  value={editedPoin}
-                  label={"Password"}
-                  placeholder={"Password"}
+                  onChange={(e) => {
+                    setUser({ ...user, email: e.target.value });
+                  }}
+                  defaultValue={editedEmail}
+                  label={"Email"}
+                  placeholder={"Email"}
                   control={control}
-                  error={errors.poin}
                 />
               </Flex>
               <Text
@@ -155,7 +140,9 @@ export function BadgeModal({ isOpen, onClose, target }) {
               py={"1.5rem"}
               _hover={{ bg: "#2DA22D" }}
               type="submit"
-              onSubmit={onClose}
+              onClick={() => {
+                onSubmit(user);
+              }}
             >
               Simpan
             </Button>

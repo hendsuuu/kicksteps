@@ -8,10 +8,16 @@ const Login = async (request) => {
     console.log(data);
     const user = await prisma.user.findFirst({
       where: {
-        name: data.username,
-        password: data.password,
+        email: data.email,
+      },
+      select: {
+        password: true,
       },
     });
+
+    // if (user > 1) {
+    //   const match = await prisma.user.findUnique({});
+    // }
 
     return new Response("berhasil Login", {
       status: 200,

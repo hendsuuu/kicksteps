@@ -27,12 +27,12 @@ export default function Home() {
       console.log(JSON.stringify(post));
       const res = await fetch("http://localhost:3000/api/login", {
         method: "POST",
-        headers:{
-          "Content-Type":"Application/json"
+        headers: {
+          "Content-Type": "Application/json",
         },
         body: JSON.stringify({
-          username:post.username,
-          password:post.password,
+          email: post.email,
+          password: post.password,
         }),
       });
 
@@ -56,20 +56,20 @@ export default function Home() {
           </div>
 
           <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            <form className="space-y-6" onSubmit={handleLogin} >
+            <form className="space-y-6" onSubmit={handleLogin}>
               <div>
                 <label
                   htmlFor="username"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Username
+                  Email
                 </label>
                 <div className="mt-2">
                   <input
                     onChange={handleInputChange}
-                    id="username"
-                    name="username"
-                    type="username"
+                    id="email"
+                    name="email"
+                    type="email"
                     // autoComplete="username"
                     required
                     className="block px-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
