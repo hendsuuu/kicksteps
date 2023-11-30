@@ -14,5 +14,15 @@ const updateUser = async (request) => {
         password: password,
       },
     });
-  } catch (error) {}
+
+    return new Response("berhasil update user",{
+      status:200
+    })
+  } catch (error) {
+    return new Response("gagal update user",{
+      status:500
+    })
+  }
 };
+
+export {updateUser as PATCH}

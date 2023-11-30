@@ -47,6 +47,29 @@ export async function POST(request) {
   }
 }
 
+export async function PATCH(request) {
+  try {
+    const { id, username, password } = await request.json();
+    const response = await prisma.user.update({
+      where: {
+        id: id,
+      },
+      data: {
+        username: username,
+        password: password,
+      },
+    });
+
+    return new Response("berhasil update user",{
+      status:200
+    })
+  } catch (error) {
+    return new Response("gagal update user",{
+      status:500
+    })
+  }
+};
+
 export async function DELETE(request) {
   try {
     const id = await request.json();

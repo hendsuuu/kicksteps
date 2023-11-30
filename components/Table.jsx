@@ -4,18 +4,37 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { DeleteModal } from "./modal/DeleteModal";
 import { useDisclosure } from "@chakra-ui/react";
-import { DELETE } from "@/app/api/user/delete/[id]/route";
+// import { DELETE } from "@/app/api/user/delete/[id]/route";
+import { BadgeModal } from "./modal/BadgeModal";
 
 const Table = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [editForm, setEditForm] = useState(null);
 
   const {
     isOpen: isOpenDelete,
     onOpen: onOpenDelete,
     onClose: onCloseDelete,
   } = useDisclosure();
+
+  const {
+    isOpen: isOpenEdit,
+    onOpen: onOpenEdit,
+    onClose: onCloseEdit,
+  } = useDisclosure();
+
+  const handleEditModal = (target) => {
+    setEditForm(target);
+    // submitDataEdit(data,target);
+    onOpenEdit();
+  };
+
+  const submitDataEdit = (data,target) => {
+    // console.log(data, target);
+    handlerEditUser(data);
+  };
 
   const handleDeleteModal = (id) => {
     setSelectedId(id);
@@ -24,9 +43,15 @@ const Table = () => {
 
   const handleDelete = (id) => {
     handlerDeleteUser(id);
+
     console.log("deleted!", id);
     onCloseDelete();
   };
+  // const handleModal = (input) => {
+  //   handleInputModal(input);
+  //   // console.log("deleted!", id);
+  //   onCloseModal();
+  // };
 
   const getAllUsers = async () => {
     setLoading(true);
@@ -50,6 +75,7 @@ const Table = () => {
     // Router.push("/");
     getAllUsers();
   };
+  
 
   useEffect(() => {
     getAllUsers();
@@ -57,6 +83,13 @@ const Table = () => {
 
   return (
     <>
+      <BadgeModal
+        isOpen={isOpenEdit}
+        onClose={onCloseEdit}
+        onSubmit={submitDataEdit}
+        target={editForm}
+      />
+
       <DeleteModal
         isOpen={isOpenDelete}
         onClose={onCloseDelete}
@@ -106,11 +139,14 @@ const Table = () => {
                         {user.password}
                       </td>
                       <td className="border-b p-4 pl-8 py-0 pb-3">
-                        <a href="">
-                          <button className="bg-yellow-500 px-5 py-1 rounded-sm mt-4 mr-5">
-                            Edit
-                          </button>
-                        </a>
+                        {/* <a href=""> */}
+                        <button
+                          onClick={() => handleEditModal(user)}
+                          className="bg-yellow-500 px-5 py-1 rounded-sm mt-4 mr-5"
+                        >
+                          Edit
+                        </button>
+                        {/* </a> */}
 
                         {/* <a href="/api/user/delete/${}"> */}
                         <button

@@ -14,9 +14,9 @@ import {
 import { CloseSquare } from "react-iconly";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { Input } from "./../inputs/Input";
+import { Input } from "@/components/inputs/Input";
 
-export function BadgeModal({ isOpen, onClose, badge, poin }) {
+export function BadgeModal({ isOpen, onClose, target }) {
   const {
     handleSubmit,
     control,
@@ -24,18 +24,44 @@ export function BadgeModal({ isOpen, onClose, badge, poin }) {
     formState: { errors },
   } = useForm();
 
-  const [editedBadge, setEditedBadge] = useState(badge);
-  const [editedPoin, setEditedPoin] = useState(poin);
+  const [editedBadge, setEditedBadge] = useState(target?.name);
+  const [editedPoin, setEditedPoin] = useState(target?.password);
+
+  const handlerEditUser = async (data) => {
+    try {
+      e.preventDefault();
+      const res = await fetch(`http://localhost:3000/api/user/`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "Application/json",
+        },
+        body: JSON.stringify({
+          id:target?.id,
+          name:data.username,
+          password:data.password
+        }),
+      });
+
+      getAllUsers();
+      if (res.ok) {
+        onCloseEdit();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleOnSubmit = (data) => {
-    console.log(data);
+    handlerEditUser(data)
+    onSubmit(data);
     onClose();
   };
 
   useEffect(() => {
-    setEditedPoin(poin);
-    setEditedBadge(badge);
-  }, [poin, badge]);
+    console.log(target);
+    setEditedBadge(target?.name);
+    setEditedPoin(target?.password);
+  }, [target?.name, target?.password]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -44,13 +70,23 @@ export function BadgeModal({ isOpen, onClose, badge, poin }) {
   }, [isOpen, reset]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size={"lg"} isCentered >
+    <Modal isOpen={isOpen} onClose={onClose} size={"lg"} isCentered>
       <ModalOverlay bg={"#0000000D"} backdropFilter={"blur(5px)"} />
-      <ModalContent borderRadius="12px">
+      <ModalContent
+        bg={"#fff"}
+        w={"auto"}
+        mt={"13%"}
+        mx={"auto"}
+        p={"50px"}
+        display={"flex"}
+        gap={"1.5rem"}
+        shadow={"lg"}
+        borderRadius="12px"
+      >
         <ModalHeader>
           <Flex flexDirection={"column"}>
             <Text fontWeight="bold" fontSize={"3xl"}>
-              Edit Lencana
+              Edit User
             </Text>
           </Flex>
           <IconButton
@@ -73,15 +109,15 @@ export function BadgeModal({ isOpen, onClose, badge, poin }) {
               <Flex direction={"column"} gap={3}>
                 <Input
                   value={editedBadge}
-                  label={"Nama Lencana"}
-                  placeholder={"Platinum"}
+                  label={"Username"}
+                  placeholder={"Username"}
                   control={control}
                   error={errors.badge}
                 />
                 <Input
                   value={editedPoin}
-                  label={"Target Poin"}
-                  placeholder={"250.000"}
+                  label={"Password"}
+                  placeholder={"Password"}
                   control={control}
                   error={errors.poin}
                 />
@@ -91,9 +127,7 @@ export function BadgeModal({ isOpen, onClose, badge, poin }) {
                 fontSize={"md"}
                 my={"2"}
                 color={"#828282"}
-              >
-                Poin untuk mencapai lencana
-              </Text>
+              ></Text>
             </ModalBody>
           </form>
         </ModalBody>
@@ -102,7 +136,7 @@ export function BadgeModal({ isOpen, onClose, badge, poin }) {
             <Button
               color={"white"}
               bg={"#828282"}
-              borderRadius={"lg"}
+              borderRadius={"10px"}
               px={"2rem"}
               py={"1.5rem"}
               _hover={{ bg: "#333333" }}
@@ -116,7 +150,7 @@ export function BadgeModal({ isOpen, onClose, badge, poin }) {
             <Button
               color={"white"}
               bg={"#35CC33"}
-              borderRadius={"lg"}
+              borderRadius={"10px"}
               px={"2rem"}
               py={"1.5rem"}
               _hover={{ bg: "#2DA22D" }}
